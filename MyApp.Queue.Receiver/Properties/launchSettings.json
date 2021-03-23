@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "MyApp.Queue.Receiver": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
