@@ -4,17 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Amazon.Extensions.NETCore.Setup;
-using Amazon.SQS;
 using Microsoft.Extensions.Configuration;
-
-namespace MyApp.Queue.Receiver
+using Amazon.SQS;
+namespace Fifo.Receiver
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine($"** WORKER {Guid.NewGuid()} **");
+            Console.WriteLine("** SQS Fifo Receiver **\n");
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -22,10 +20,9 @@ namespace MyApp.Queue.Receiver
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddDefaultAWSOptions(hostContext.Configuration.GetAWSOptions());
+                    services.AddAWSService<IAmazonSQS>();
                     services.AddHostedService<Worker>();
-                    IConfiguration config = hostContext.Configuration;
-                    AWSOptions options = config.GetAWSOptions();
-                    services.AddAWSService<IAmazonSQS>(options);
                 });
     }
 }

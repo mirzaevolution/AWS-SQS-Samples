@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using MyApp.Models;
@@ -12,7 +13,7 @@ namespace MyApp.Queue.Sender
         private static IAmazonSQS _sqsClient;
         static Program()
         {
-            _sqsClient = new AmazonSQSClient(QueueConfig.AccessKey, QueueConfig.AccessSecret);
+            _sqsClient = new AmazonSQSClient(RegionEndpoint.APSoutheast1);
         }
         static void Main(string[] args)
         {

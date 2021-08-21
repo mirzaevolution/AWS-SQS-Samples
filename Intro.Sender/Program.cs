@@ -32,7 +32,8 @@ namespace Intro.Sender
                 QueueUrl = _queueUrl,
                 MessageBody = json,
                 //MessageGroupId = Guid.NewGuid().ToString() //this is fifo session id
-                MessageGroupId = "MyGroup"
+                MessageGroupId = "MyGroup",
+
 
             });
             Console.WriteLine($"MessageId: {response.MessageId}");

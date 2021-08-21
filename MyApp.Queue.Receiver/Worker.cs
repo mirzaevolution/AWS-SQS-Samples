@@ -30,21 +30,37 @@ namespace MyApp.Queue.Receiver
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                ReceiveMessageResponse response = await _sqsClient.ReceiveMessageAsync(new ReceiveMessageRequest
+                Console.WriteLine($"## Getting queue item...");
+                
+                //It will use long polling and will wait for 10 seconds if no messages avail,
+                //Otherwise it will grab the messages immediately...
+                ReceiveMessageResponse response = 
+                    await _sqsClient.ReceiveMessageAsync(new ReceiveMessageRequest
                 {
-                    WaitTimeSeconds = 3,
+                    WaitTimeSeconds = 10,
                     QueueUrl = QueueConfig.QueueUrl,
-                    MaxNumberOfMessages = 10
+                    MaxNumberOfMessages = 1
                 });
+                
+                Console.WriteLine("## Polled...");
                 if(response.HttpStatusCode == System.Net.HttpStatusCode.OK && 
                     response.Messages.Count>0)
                 {
                     foreach(var message in response.Messages)
                     {
-                        Profile profile = JsonConvert.DeserializeObject<Profile>(message.Body);
-                        if (profile != null)
+                        //Console.WriteLine($"#Raw -> {message.Body}");
+
+                        try
                         {
-                            Console.WriteLine($"\nID: {profile.Id}, Name: {profile.Name}, Email: {profile.Email}");
+                            Profile profile = JsonConvert.DeserializeObject<Profile>(message.Body);
+                            if (profile != null)
+                            {
+                                Console.WriteLine($"\nID: {profile.Id}, Name: {profile.Name}, Email: {profile.Email}");
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex);
                         }
                         await _sqsClient.DeleteMessageAsync(QueueConfig.QueueUrl, message.ReceiptHandle);
                     }
